@@ -48,3 +48,28 @@ tsc --version
 * 使用VS Code编译运行ts文件，CTRL+SHIFT+B快捷键，选择生成任务，会生成一个相同文件名的js文件
 
 * node hello world.js 即可运行
+
+### 3. 变量类型
+
+* TypeScript中的数据类型有：
+1. Undefined : 与js中的undefined一样
+2. Number: 数值类型；包括整型和浮点型,包裹NaN,Infinity,-Infunity
+3. string : 字符串类型;
+4. Boolean: 布尔类型；只有True和False
+5. enum：枚举类型；
+6. any : 任意类型；用于储存不断变化的类型，而且不希望报错，可以使用这个特殊的类型
+7. void：空类型；
+8. Array : 数组类型;
+9. Tuple : 元祖类型；
+10. Null ：空类型。
+
+* 枚举类型：
+
+```ts
+enum REN{
+    a='aaaaaaaaaaa',
+    b='bbbbbbbbbbb',
+    c='ccccccccccc',
+}
+console.log(REN.b) // bbbbbbbb
+```
