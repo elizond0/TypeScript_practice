@@ -21,3 +21,30 @@
 * TypeScript可以重用JavaScript代码，调用流行的JavaScript库。
 
 * TypeScript提供了类、模块和接口，更易于构建组件和维护。
+
+## 2. 配置开发环境
+
+### 2.1 nodeJs
+
+### 2.2 安装TypeScript包
+
+* 如果是mac电脑，要使用sudo npm install typescript -g 指令进行安装
+
+```cmd
+npm install typescript -g
+tsc --version
+```
+
+### 2.3 编写HelloWorld程序
+
+* npm init -y 生成package.json文件
+
+* tsc --init 生成tsconfig.json文件
+
+* npm install @types/node --dev-save 安装@types/node，主要解决模块的声明文件问题。
+
+* 创建hello world.ts文件
+
+* 使用VS Code编译运行ts文件，CTRL+SHIFT+B快捷键，选择生成任务，会生成一个相同文件名的js文件
+
+* node hello world.js 即可运行
