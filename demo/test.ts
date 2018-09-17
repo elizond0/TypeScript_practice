@@ -1,4 +1,4 @@
-// 2. 变量类型-枚举
+// 3. 变量类型-枚举
 // enum REN{
 //     a='aaaaaaaaaaa',
 //     b='bbbbbbbbbbb',
@@ -6,7 +6,8 @@
 // }
 // console.log(REN.b) // bbbbbbbbbbb
 
-// 3. 函数
+// 4. 函数
+// 4.1 TypeScript语言中的函数参数
 // * 可选参数:在定义函数的时候通过?标注。
 //age-参数类型,多个参数使用','分隔,'?'表示可以不传
 // function search(age:number,name?:string):string{//大括号前的string-函数返回类型

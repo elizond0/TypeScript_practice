@@ -157,3 +157,32 @@ let names=['abc','cdw','dsdsd']
 let result=search(18,...names)
 console.log(result);//你输入的年龄是：18，曾经使用过的名字有：abc、cdw、dsdsd
 ```
+
+### 4.2 函数的三种定义方式
+
+* 函数声明法:最常用的函数定义法。使用function关键字和函数名去定义一个函数。
+
+```ts
+function add(n1:number,n2:number):number{
+    return n1+n2
+}
+console.log(add(1,4))
+```
+
+* 函数表达式法:将一个函数赋值给一个变量，这个变量名就是函数名。通过变量名就可以调用函数了。这种方式定义的函数，必须在定义之后，调用函数。下面例子中等号右边的函数没有函数名，称为匿名函数。
+
+```ts
+var add = function(n1:number,n2:number):number{
+    return n1+n2
+}
+console.log(add(1,4))
+```
+
+* 箭头函数:ES6 中新增的函数定义的新方式，TypeScript 语言是完全支持 ES6 语法的。箭头函数定义的函数一般都用于回调函数中。
+
+```ts
+var add = (n1:number,n2:number):number=>{
+    return n1+n2
+}
+console.log(add(1,4))
+```
