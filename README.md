@@ -28,12 +28,12 @@
 
 ### 2.2 安装TypeScript包
 
-* 如果是mac电脑，要使用sudo npm install typescript -g 指令进行安装
-
 ```cmd
 npm install typescript -g
 tsc --version
 ```
+
+* 如果是mac电脑，要使用sudo npm install typescript -g 指令进行安装
 
 ### 2.3 编写HelloWorld程序
 
@@ -185,4 +185,78 @@ var add = (n1:number,n2:number):number=>{
     return n1+n2
 }
 console.log(add(1,4))
+```
+
+## 5. 引用类型
+
+### 5.1 引用类型-数组
+
+* 数组声明
+
+```ts
+let arr1:number[]//数值类型的数组
+let arr2:Array<string>//字符串类型的数组
+```
+
+* 数组赋值，指定数据类型的数组只能存储同一类型的数组元素。
+
+```ts
+let arr3:number[]=[1,2,3,4,5]//字面量赋值
+let arr4:Array<string>=new Array('abc','bac','cba')//构造函数赋值
+
+let arr5:number[] = [1,2,true] //不允许混搭，会报错
+```
+
+### 5.2 引用类型-字符串
+
+* 字符串的两种类型：
+1. 基本类型字符串：由单引号或者双引号括起来的一串字符串。
+2. 引用类型字符串：用new 实例化的 String类型。类型注释String首字母需要大写。
+
+```ts
+let str1:string='abc'
+let str2:String=new String('cba')//注意此处 变量之后的类型注释，String首字母需要大写
+```
+
+### 5.3 引用类型-日期对象
+
+* 日期对象是Date的实例，可以使用构造函数的方法进行创建。并且构造函数中可以传递多种类型的参数。
+
+```ts
+// 1.不传递任何参数
+let d1:Date=new Date()
+console.log(d1);//2018-09-17T07:17:03.053Z
+// 2.传递一个整数，整数代表的是距离1970-01-01 00:00:00的毫秒数。
+let d2:Date=new Date(1000)
+console.log(d2)//1970-01-01T00:00:01.000Z
+// 3.传递一个字符串，会生成相对应的日期对象。
+let d3:Date=new Date('2018/09/06 05:30:00')
+console.log(d3)//2018-09-05T21:30:00.000Z
+// 4.传递表示年月日时分秒的变量
+let d4:Date=new Date(1991,11,7,10,12,16,500)//(year,month,day,hours,minutes,seconds,ms)
+console.log(d4);//1991-12-07T02:12:16.500Z
+```
+
+### 5.4 引用类型-正则表达式
+
+* 声明方法：构造函数法，字面量法
+
+```ts
+// 构造函数法
+let reg1:RegExp=new RegExp('abc')
+console.log(reg1)//  /abc/
+// 字面量法
+let reg2:RegExp=/edf/
+console.log(reg2);//  /edf/
+```
+
+* 常用方法:test()和exec()
+
+```ts
+let reg1:RegExp=new RegExp('abc')
+let str1:string='abcsdasdasdas'
+// test(string) ：在字符串中查找是否存在指定的正则表达式并返回布尔值，如果存在则返回 true，不存在则返回 false。
+console.log(reg1.test(str1));//true
+// exec(string) : 用于在字符串中查找指定正则表达式，如果 exec() 方法执行成功，则返回包含该查找字符串的相关信息数组。如果执行失败，则返回 null
+console.log(reg1.exec(str1));//[ 'abc', index: 0, input: 'abcsdasdasdas' ]
 ```
