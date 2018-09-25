@@ -58,10 +58,11 @@ tsc --version
 4. Boolean: 布尔类型；只有True和False
 5. enum：枚举类型；
 6. any : 任意类型；用于储存不断变化的类型，而且不希望报错，可以使用这个特殊的类型
-7. void：空类型；
+7. void：空类型；void类型像是与any类型相反，它表示没有任何类型。
 8. Array : 数组类型;
-9. Tuple : 元祖类型；
+9. Tuple : 元组类型；可以定义一对值分别为 string和number类型的元组，必须按顺序。
 10. Null ：空类型。
+11. Never 类型表示的是那些永不存在的值的类型。
 
 * 枚举类型：
 
@@ -72,6 +73,50 @@ enum REN{
     c='ccccccccccc',
 }
 console.log(REN.b) // bbbbbbbb
+```
+
+* Void 空类型：
+
+```ts
+// 当一个函数没有返回值时，通常会见到其返回值类型是 void：
+function warnUser(): void {
+    console.log("This is my warning message");
+}
+// 声明一个void类型的变量没有什么大用，因为你只能为它赋予undefined和null：
+let unusable: void = undefined;
+```
+
+* Null 和 Undefined：
+1. TypeScript里，undefined和null两者各自有自己的类型分别叫做undefined和null。 和 void相似，它们的本身的类型用处不是很大。
+2. 默认情况下null和undefined是所有类型的子类型。 就是说可以把 null和undefined赋值给number类型的变量。
+3. 当指定了--strictNullChecks标记，null和undefined只能赋值给void和它们各自。 这能避免 很多常见的问题。
+
+```ts
+let u: undefined = undefined;
+let n: null = null;
+```
+
+* Never 类型：
+1. never类型是那些总是会抛出异常或根本就不会有返回值的函数表达式或箭头函数表达式的返回值类型
+2. 变量也可能是 never类型，当它们被永不为真的类型保护所约束时
+3. never类型是任何类型的子类型，也可以赋值给任何类型；然而，没有类型是never的子类型或可以赋值给never类型（除了never本身之外）。 即使 any也不可以赋值给never。
+
+```ts
+// 返回never的函数必须存在无法达到的终点
+function error(message: string): never {
+    throw new Error(message);
+}
+
+// 推断的返回值类型为never
+function fail() {
+    return error("Something failed");
+}
+
+// 返回never的函数必须存在无法达到的终点
+function infiniteLoop(): never {
+    while (true) {
+    }
+}
 ```
 
 ## 4. 函数
@@ -259,4 +304,104 @@ let str1:string='abcsdasdasdas'
 console.log(reg1.test(str1));//true
 // exec(string) : 用于在字符串中查找指定正则表达式，如果 exec() 方法执行成功，则返回包含该查找字符串的相关信息数组。如果执行失败，则返回 null
 console.log(reg1.exec(str1));//[ 'abc', index: 0, input: 'abcsdasdasdas' ]
+```
+
+## 6. 类
+
+### 6.1 类-定义
+
+```ts
+class Base {
+    name: string;
+    age: number;
+    constructor(name: string, age: number) {
+        this.name = name
+        this.age = age
+    }
+    introduce() {
+        console.log('我叫' + this.name + '，今年' + this.age + '岁。')
+    }
+}
+let testClass: Base = new Base('abc', 18)
+console.log(testClass)// Base { name: 'abc', age: 18 }
+testClass.introduce()// 我叫abc，今年18岁。
+```
+
+### 6.2 类-修饰符
+
+* 访问修饰符
+1. public:公有修饰符，可以在类内或者类外使用public修饰的属性或者行为，默认修饰符。
+2. protected:受保护的修饰符，可以本类和子类中使用protected修饰的属性和行为。
+3. private:私有修饰符，只可以在类内使用private修饰的属性和行为。
+
+* 只读属性修饰符，只读属性必须在声明时或者构造函数里被初始化
+
+```ts
+class Base {
+    public readonly name: string;//公有修饰符，类内或者类外使用，默认public;readonly只读修饰符，只读属性必须在声明时或者构造函数里被初始化
+    private age: number;//私有修饰符，只可以在类内使用
+    protected sex: string;//受保护的修饰符，可以本类和子类中使用
+    constructor(name: string, age: number, sex: string) {
+        this.name = name
+        this.age = age
+        this.sex = sex
+    }
+    public introduce() { //公有修饰符
+        console.log('我叫' + this.name + '，今年' + this.age + '岁。')
+    }
+    protected showSex(){
+        console.log('我是'+this.sex+'的')
+    }
+}
+let test = new Base('abc',20,'男')
+console.log(test);//Base { name: 'abc', age: 20, sex: '男' }
+test.introduce()//我叫abc，今年20岁。
+console.log(test.age);//会报错,但依然能打印 20
+console.log(test.sex)//会报错,但依然能打印 男
+test.showSex()//会报错,但依然能打印 我是男的
+console.log(test.name);//abc
+test.name='ssss'
+console.log(test.name);//编译会报错，但依然可以发现name被修改了 ssss
+```
+
+### 6.3 类-继承和重写
+
+* 继承 class B extends A ，TypeScript不支持多重继承
+
+* 重写，如果子类重写了构造函数，并且类内的方法中需要用到父类的属性，则在子类构造函数内需要super继承父类
+
+```ts
+class Base {
+    public readonly name: string;
+    public age: number;
+    public sex: string;
+    constructor(name: string, age: number, sex: string) {
+        this.name = name
+        this.age = age
+        this.sex = sex
+    }
+    public introduce() {
+        console.log('我叫' + this.name + '，今年' + this.age + '岁。')
+    }
+    public showSex() {
+        console.log('我是' + this.sex + '的')
+    }
+}
+
+class Senior extends Base {//继承
+    //由于子类里包含了constructor函数，相等于重写，则需要super继承父类的属性
+    constructor(name: string, age: number, sex: string) {
+        super(name, age, sex)
+    }
+    public earnMoney() {
+        console.log('赚钱')
+    }
+    public introduce() {//重写
+        super.introduce()
+        console.log(`哈哈哈，我是${this.sex}的`)
+    }
+}
+let senior1 = new Senior('bcd', 1, '男')
+senior1.introduce()//我叫bcd，今年1岁。  哈哈哈，我是男的
+senior1.earnMoney()//赚钱
 ```

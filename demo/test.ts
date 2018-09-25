@@ -94,9 +94,98 @@
 // console.log(reg2);//  /edf/
 
 // 常用方法:test()和exec()
-let reg1:RegExp=new RegExp('abc')
-let str1:string='abcsdasdasdas'
-// test(string) ：在字符串中查找是否存在指定的正则表达式并返回布尔值，如果存在则返回 true，不存在则返回 false。
-console.log(reg1.test(str1));//true
-// exec(string) : 用于在字符串中查找指定正则表达式，如果 exec() 方法执行成功，则返回包含该查找字符串的相关信息数组。如果执行失败，则返回 null
-console.log(reg1.exec(str1));//[ 'abc', index: 0, input: 'abcsdasdasdas' ]
+// let reg1:RegExp=new RegExp('abc')
+// let str1:string='abcsdasdasdas'
+// // test(string) ：在字符串中查找是否存在指定的正则表达式并返回布尔值，如果存在则返回 true，不存在则返回 false。
+// console.log(reg1.test(str1));//true
+// // exec(string) : 用于在字符串中查找指定正则表达式，如果 exec() 方法执行成功，则返回包含该查找字符串的相关信息数组。如果执行失败，则返回 null
+// console.log(reg1.exec(str1));//[ 'abc', index: 0, input: 'abcsdasdasdas' ]
+
+// 6.1 类-定义
+// class Base {
+//     name: string;
+//     age: number;
+//     constructor(name: string, age: number) {
+//         this.name = name
+//         this.age = age
+//     }
+//     introduce() {
+//         console.log('我叫' + this.name + '，今年' + this.age + '岁。')
+//     }
+// }
+// let testClass: Base = new Base('abc', 18)
+// console.log(testClass)// Base { name: 'abc', age: 18 }
+// testClass.introduce()// 我叫abc，今年18岁。
+
+// 6.2 类-修饰符
+// class Base {
+//     public readonly name: string;//公有修饰符，类内或者类外使用，默认public;readonly只读修饰符，只读属性必须在生命时或者构造函数里被初始化
+//     private age: number;//私有修饰符，只可以在类内使用
+//     protected sex: string;//受保护的修饰符，可以本类和子类中使用
+//     constructor(name: string, age: number, sex: string) {
+//         this.name = name
+//         this.age = age
+//         this.sex = sex
+//     }
+//     public introduce() { //公有修饰符
+//         console.log('我叫' + this.name + '，今年' + this.age + '岁。')
+//     }
+//     protected showSex(){
+//         console.log('我是'+this.sex+'的')
+//     }
+// }
+// let test = new Base('abc',20,'男')
+// console.log(test);//Base { name: 'abc', age: 20, sex: '男' }
+// test.introduce()//我叫abc，今年20岁。
+// console.log(test.age);//会报错,但依然能打印 20
+// console.log(test.sex)//会报错,但依然能打印 男
+// test.showSex()//会报错,但依然能打印 我是男的
+// console.log(test.name);//abc
+// test.name='ssss'
+// console.log(test.name);//编译会报错，但依然可以发现name被修改了 ssss
+
+// 6.3 类-继承和重写
+// class Base {
+//     public readonly name: string;
+//     public age: number;
+//     public sex: string;
+//     constructor(name: string, age: number, sex: string) {
+//         this.name = name
+//         this.age = age
+//         this.sex = sex
+//     }
+//     public introduce() {
+//         console.log('我叫' + this.name + '，今年' + this.age + '岁。')
+//     }
+//     public showSex() {
+//         console.log('我是' + this.sex + '的')
+//     }
+// }
+
+// class Senior extends Base {//继承
+//     //由于子类里包含了constructor函数，相等于重写，则需要super继承父类的属性
+//     constructor(name: string, age: number, sex: string) {
+//         super(name, age, sex)
+//     }
+//     public earnMoney() {
+//         console.log('赚钱')
+//     }
+//     public introduce() {//重写
+//         super.introduce()
+//         console.log(`哈哈哈，我是${this.sex}的`)
+//     }
+// }
+// let senior1 = new Senior('bcd', 1, '男')
+// senior1.introduce()//我叫bcd，今年1岁。  哈哈哈，我是男的
+// senior1.earnMoney()//赚钱
+
+
+
+
+
+
+
+
+
+
+
