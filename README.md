@@ -405,3 +405,101 @@ let senior1 = new Senior('bcd', 1, '男')
 senior1.introduce()//我叫bcd，今年1岁。  哈哈哈，我是男的
 senior1.earnMoney()//赚钱
 ```
+
+## 7. 接口 interface
+
+### 7.1 对象类型
+
+* 在面向对象的语言中，术语interface经常被用来定义一个不包含数据和逻辑代码但是用来签名定义了行为的抽象类型。
+
+* TypeScript的核心原则之一是对值所具有的结构进行类型检查。 它有时被称做“鸭式辨型法”或“结构性子类型化”。 在TypeScript里，接口的作用就是为这些类型命名和为你的代码或第三方代码定义契约。类型检查器不会去检查属性的顺序，只要相应的属性存在并且类型也是对的就可以。
+
+```ts
+// 参数对象接口
+interface Shelter{
+    age:number
+    sexual:string
+    homeless?:boolean
+}
+let shelter999:Shelter={//填入不符合的类型ts会报错
+    age:10,
+    sexual:'male',
+    homeless:true
+}
+
+// 函数传入参数对象接口
+interface SearchShelter {
+    age: number
+    sexual?: string
+}
+function createFilter(config: SearchShelter) {
+    let newFilter = { age: 16, sexual: 'male' }
+    if (config.age) {
+        newFilter.age = config.age
+    }
+    if (config.sexual) {
+        newFilter.sexual = config.sexual
+    }
+
+    return newFilter
+}
+let newFilter1 = createFilter({ age: 80, sexual: 'male' })
+console.log(newFilter1);//{ age: 80, sexual: 'male' }
+```
+
+### 7.2 可选属性和只读属性
+
+* 参数对象接口，同样支持只读属性readonly和可选属性?，用法也相似
+
+* 最简单判断该用readonly还是const的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 const，若做为属性则使用readonly。
+
+### 7.3 额外的属性检查
+
+* ts会检查传入属性值是否存在于接口，如果接口中未定义则会报错，即使是可选属性。简单说，接口对象必须包含传入参数的对象
+
+```ts
+interface SearchShelter {
+    age: number
+    sexual?: string
+}
+function createFilter(config: SearchShelter) {
+    let newFilter = { age: 16, sexual: 'male' }
+    if (config.age) {
+        newFilter.age = config.age
+    }
+    if (config.sexual) {
+        newFilter.sexual = config.sexual
+    }
+
+    return newFilter
+}
+//此处sexual为可选属性，传入不存在的属性值sexual1则会报错
+let newFilter2 = createFilter({ age: 80, sexual1: 'male' })
+```
+
+* 绕开检查的方法：1，使用类型断言as [接口名]；2，更为推荐此方法，添加一个字符串索引签名，前提是你能够确定这个对象可能具有某些做为特殊用途使用的额外属性；3，将参数对象赋值给一个变量：因为变量不会经过额外属性检查，所以编译器不会报错。
+
+```ts
+interface SearchShelter {
+    age: number
+    sexual?: string
+    // 方法2：添加一个字符串索引签名
+    [propName: string]: any;//表示只要它们不是age和sexual，那么就无所谓它们的类型是什么
+}
+
+function createFilter(config: SearchShelter) {
+    let newFilter = { age: 16, sexual: 'male' }
+    if (config.age) {
+        newFilter.age = config.age
+    }
+    if (config.sexual) {
+        newFilter.sexual = config.sexual
+    }
+    console.log(config);//{ age: 80, sexual1: 'female' }
+    return newFilter
+}
+let newFilter2 = createFilter({ age: 80, sexual1: 'female' })
+// 方法1：类型断言 as SearchShelter
+// let newFilter2 = createFilter({ age: 80, sexual1: 'female' } as SearchShelter)
+// 方法3：将参数对象赋值给一个变量：因为变量不会经过额外属性检查，所以编译器不会报错。
+```

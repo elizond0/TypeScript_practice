@@ -179,7 +179,61 @@
 // senior1.introduce()//我叫bcd，今年1岁。  哈哈哈，我是男的
 // senior1.earnMoney()//赚钱
 
+// 7. 接口 interface
+// 参数对象接口
+// interface Shelter{
+//     age:number
+//     sexual:string
+//     homeless?:boolean
+// }
+// let shelter999:Shelter={//填入不符合的类型ts会报错
+//     age:10,
+//     sexual:'male',
+//     homeless:true
+// }
+// 额外的属性检查
+// interface SearchShelter {
+//     age: number
+//     sexual?: string
+// }
 
+// function createFilter(config: SearchShelter) {
+//     let newFilter = { age: 16, sexual: 'male' }
+//     if (config.age) {
+//         newFilter.age = config.age
+//     }
+//     if (config.sexual) {
+//         newFilter.sexual = config.sexual
+//     }
+
+//     return newFilter
+// }
+
+// let newFilter1 = createFilter({ age: 80, sexual: 'male' })
+// console.log(newFilter1);//{ age: 80, sexual: 'male' }
+
+// 7.3 额外的属性检查
+interface SearchShelter {
+    age: number
+    sexual?: string
+    // 方法2：添加一个字符串索引签名，
+    [propName: string]: any;//表示只要它们不是age和sexual，那么就无所谓它们的类型是什么
+}
+
+function createFilter(config: SearchShelter) {
+    let newFilter = { age: 16, sexual: 'male' }
+    if (config.age) {
+        newFilter.age = config.age
+    }
+    if (config.sexual) {
+        newFilter.sexual = config.sexual
+    }
+    console.log(config);//{ age: 80, sexual1: 'female' }
+    return newFilter
+}
+let newFilter2 = createFilter({ age: 80, sexual1: 'female' })
+// 方法1：类型断言 as SearchShelter
+// let newFilter2 = createFilter({ age: 80, sexual1: 'female' } as SearchShelter)
 
 
 
