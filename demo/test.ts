@@ -179,7 +179,7 @@
 // senior1.introduce()//我叫bcd，今年1岁。  哈哈哈，我是男的
 // senior1.earnMoney()//赚钱
 
-// 7. 接口 interface
+// 7.1 接口 interface-对象类型
 // 参数对象接口
 // interface Shelter{
 //     age:number
@@ -191,7 +191,8 @@
 //     sexual:'male',
 //     homeless:true
 // }
-// 额外的属性检查
+// 
+// 函数传入参数对象接口
 // interface SearchShelter {
 //     age: number
 //     sexual?: string
@@ -212,32 +213,136 @@
 // let newFilter1 = createFilter({ age: 80, sexual: 'male' })
 // console.log(newFilter1);//{ age: 80, sexual: 'male' }
 
-// 7.3 额外的属性检查
-interface SearchShelter {
-    age: number
-    sexual?: string
-    // 方法2：添加一个字符串索引签名，
-    [propName: string]: any;//表示只要它们不是age和sexual，那么就无所谓它们的类型是什么
-}
+// 额外的属性检查
+// interface SearchShelter {
+//     age: number
+//     sexual?: string
+//     // 方法2：添加一个字符串索引签名，
+//     [propName: string]: any;//表示只要它们不是age和sexual，那么就无所谓它们的类型是什么
+// }
 
-function createFilter(config: SearchShelter) {
-    let newFilter = { age: 16, sexual: 'male' }
-    if (config.age) {
-        newFilter.age = config.age
-    }
-    if (config.sexual) {
-        newFilter.sexual = config.sexual
-    }
-    console.log(config);//{ age: 80, sexual1: 'female' }
-    return newFilter
-}
-let newFilter2 = createFilter({ age: 80, sexual1: 'female' })
+// function createFilter(config: SearchShelter) {
+//     let newFilter = { age: 16, sexual: 'male' }
+//     if (config.age) {
+//         newFilter.age = config.age
+//     }
+//     if (config.sexual) {
+//         newFilter.sexual = config.sexual
+//     }
+//     console.log(config);//{ age: 80, sexual1: 'female' }
+//     return newFilter
+// }
+// let newFilter2 = createFilter({ age: 80, sexual1: 'female' })
 // 方法1：类型断言 as SearchShelter
 // let newFilter2 = createFilter({ age: 80, sexual1: 'female' } as SearchShelter)
 
+// 7.2 函数类型
+// interface SearchFunc {
+//     // boolean表示的是函数返回值的类型
+//     (source: string, subString: string): boolean;
+// }
+// let mySearch: SearchFunc;
+// // 函数的参数名不需要与接口里定义的名字相匹配
+// mySearch = function (src: string, sub: string) {
+//     let result = src.search(sub);
+//     console.log(result);//0
+//     return result > -1;
+// }
+// mySearch('string1', 's')
 
+// // 7.3 可索引的类型
+// interface StringArray {
+//     // [index: number]: string;// 使用number索引时返回string类型的值
+//     readonly [index: number]: string;// 可以将索引签名设置为只读，这样就防止了给索引赋值
 
+//     length: number;    // 可以，length是number类型
+//     // name: string       // 错误，`name`的类型与索引类型返回值的类型不匹配
+// }
+// let myArray: StringArray;
+// myArray = ["abc", "edf"];
 
+// let myStr: string = myArray[0];
+// console.log(myStr);//abc
+// // myArray[0]='sss'// 报错，只读
+
+// 7.4 类类型
+// interface ClockConstructor {
+//     new (hour: number, minute: number): ClockInterface;
+// }
+// interface ClockInterface {
+//     tick():void;
+// }
+
+// function createClock(ctor: ClockConstructor, hour: number, minute: number): ClockInterface {
+//     return new ctor(hour, minute);
+// }
+
+// class DigitalClock implements ClockInterface {
+//     constructor(h: number, m: number) { }
+//     tick() {
+//         console.log("beep beep");
+//     }
+// }
+// class AnalogClock implements ClockInterface {
+//     constructor(h: number, m: number) { }
+//     tick() {
+//         console.log("tick tock");
+//     }
+// }
+
+// let digital = createClock(DigitalClock, 12, 17);
+// let analog = createClock(AnalogClock, 7, 32);
+
+// interface Shape {
+//     color: string;
+// }
+// interface Square extends Shape {
+//     sideLength: number;
+// }
+// let square = <Square>{};
+// square.color = "blue";
+// square.sideLength = 10;
+// console.log(square)//{ color: 'blue', sideLength: 10 }
+
+// 7.5 混合类型
+// interface Counter {
+//     (start: number): string;
+//     interval: number;
+//     reset(): void;
+// }
+
+// function getCounter(): Counter {
+//     let counter = <Counter>function (start: number) { };
+//     counter.interval = 123;
+//     counter.reset = function () { };
+//     return counter;
+// }
+
+// let c = getCounter();
+
+// 7.6 接口继承类
+class Control {//定义类
+    private state: any;
+}
+
+interface SelectableControl extends Control {//接口继承类
+    select(): void;
+}
+
+class Button extends Control implements SelectableControl {//子类继承基类，实现接口类，有效
+    select() { }
+}
+
+class TextBox extends Control {//子类继承基类，有效
+    select() { }
+}
+
+// 错误：“Image”类型缺少“state”属性。Image和Input类没有继承接口，继承不包括实现implements
+class Image implements SelectableControl {//报错
+    select() { }
+}
+
+class Input {}//什么都没有继承
 
 
 

@@ -447,15 +447,9 @@ let newFilter1 = createFilter({ age: 80, sexual: 'male' })
 console.log(newFilter1);//{ age: 80, sexual: 'male' }
 ```
 
-### 7.2 可选属性和只读属性
+* 参数对象接口，同样支持只读属性readonly和可选属性?，用法也相似,最简单判断该用readonly还是const的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 const，若做为属性则使用readonly。
 
-* 参数对象接口，同样支持只读属性readonly和可选属性?，用法也相似
-
-* 最简单判断该用readonly还是const的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 const，若做为属性则使用readonly。
-
-### 7.3 额外的属性检查
-
-* ts会检查传入属性值是否存在于接口，如果接口中未定义则会报错，即使是可选属性。简单说，接口对象必须包含传入参数的对象
+* 额外的属性检查：ts会检查传入属性值是否存在于接口，如果接口中未定义则会报错，即使是可选属性。简单说，接口对象必须包含传入参数的对象
 
 ```ts
 interface SearchShelter {
@@ -503,3 +497,139 @@ let newFilter2 = createFilter({ age: 80, sexual1: 'female' })
 // let newFilter2 = createFilter({ age: 80, sexual1: 'female' } as SearchShelter)
 // 方法3：将参数对象赋值给一个变量：因为变量不会经过额外属性检查，所以编译器不会报错。
 ```
+
+### 7.2 函数类型
+
+* 接口能够描述JavaScript中对象拥有的各种各样的外形。为了使用接口表示函数类型，需要给接口定义一个调用签名。它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
+
+* 函数类型的类型检查来说，函数的参数名不需要与接口里定义的名字相匹配。函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。 如果你不想指定类型，TypeScript的类型系统会推断出参数类型，因为函数直接赋值给了 定义接口的类型变量。
+
+```ts
+interface SearchFunc {
+    // boolean表示的是函数返回值的类型
+    (source: string, subString: string): boolean;
+}
+let mySearch: SearchFunc;
+// 函数的参数名不需要与接口里定义的名字相匹配
+mySearch = function (src: string, sub: string) {
+    let result = src.search(sub);
+    console.log(result);//0
+    return result > -1;
+}
+mySearch('string1', 's')
+```
+
+### 7.3 可索引的类型
+
+* 具有一个 索引签名，它描述了对象索引的类型，还有相应的索引返回值类型。共有支持两种索引签名：字符串和数字。 可以同时使用两种类型的索引，但是数字索引的返回值必须是字符串索引返回值类型的子类型。 这是因为当使用 number来索引时，JavaScript会将它转换成string然后再去索引对象。 也就是说用 100（一个number）去索引等同于使用"100"（一个string）去索引，因此两者需要保持一致。
+
+```ts
+interface StringArray {
+    // [index: number]: string;// 使用number索引时返回string类型的值
+    readonly [index: number]: string;// 可以将索引签名设置为只读，这样就防止了给索引赋值
+
+    length: number;    // 可以，length是number类型
+    // name: string       // 错误，`name`的类型与索引类型返回值的类型不匹配
+}
+let myArray: StringArray;
+myArray = ["abc", "edf"];
+
+let myStr: string = myArray[0];
+console.log(myStr);//abc
+// myArray[0]='sss'// 报错，只读
+```
+
+### 7.4 类类型
+
+* 接口描述了类的公共部分，而不是公共和私有两部分。它不会检查类是否具有某些私有成员。类是具有两个类型的：静态部分的类型和实例的类型，constructor存在于类的静态部分，所以不在检查的范围内。因此，应该直接操作类的静态部分。
+
+```ts
+interface ClockConstructor {
+    new (hour: number, minute: number): ClockInterface;
+}
+interface ClockInterface {
+    tick():void;
+}
+
+function createClock(ctor: ClockConstructor, hour: number, minute: number): ClockInterface {
+    return new ctor(hour, minute);
+}
+
+class DigitalClock implements ClockInterface {
+    constructor(h: number, m: number) { }
+    tick() {
+        console.log("beep beep");
+    }
+}
+class AnalogClock implements ClockInterface {
+    constructor(h: number, m: number) { }
+    tick() {
+        console.log("tick tock");
+    }
+}
+
+let digital = createClock(DigitalClock, 12, 17);
+let analog = createClock(AnalogClock, 7, 32);
+```
+
+* 接口支持继承
+
+```ts
+interface Shape {
+    color: string;
+}
+interface Square extends Shape {
+    sideLength: number;
+}
+let square = <Square>{};//<>相当于是接口继承的new方法
+square.color = "blue";
+square.sideLength = 10;
+console.log(square)//{ color: 'blue', sideLength: 10 }
+```
+
+### 7.5 混合类型
+
+* 一个对象可以同时做为函数和对象使用，并带有额外的属性。在使用JavaScript第三方库的时候，可能需要去完整地定义类型。
+
+```ts
+interface Counter {//定义混合接口
+    (start: number): string;
+    interval: number;
+    reset(): void;
+}
+function getCounter(): Counter {
+    let counter = <Counter>function (start: number) { };
+    counter.interval = 123;
+    counter.reset = function () { };
+    return counter;
+}
+let c = getCounter();
+```
+
+### 7.6 接口继承类
+
+* 当接口继承了一个类的类型时，它会继承类的成员但不包括其实现。接口同样会继承到类的private和protected成员。 这意味着创建了一个接口继承了一个拥有私有或受保护的成员的类时，这个接口类型只能被这个类或其子类所实现（implement）。这个子类除了继承至基类外与基类没有任何关系。
+
+```ts
+class Control {//定义类
+    private state: any;
+}
+interface SelectableControl extends Control {//接口继承类
+    select(): void;
+}
+class Button extends Control implements SelectableControl {//子类继承基类，实现接口类，有效
+    select() { }
+}
+class TextBox extends Control {//子类继承基类，有效
+    select() { }
+}
+// 错误：“Image”类型缺少“state”属性。Image和Input类没有继承接口，继承不包括实现implements
+class Image implements SelectableControl {//报错
+    select() { }
+}
+class Input {}//什么都没有继承
+// 在上面的例子里，SelectableControl包含了Control的所有成员，包括私有成员state。 因为 state是私有成员，所以只能够是Control的子类们才能实现SelectableControl接口。 因为只有 Control的子类才能够拥有一个声明于Control的私有成员state，这对私有成员的兼容性是必需的。
+
+// 在Control类内部，是允许通过SelectableControl的实例来访问私有成员state的。 实际上， SelectableControl接口和拥有select方法的Control类是一样的。 Button和TextBox类是SelectableControl的子类（因为它们都继承自Control并有select方法），但Image和Input类并不是这样的。
+```
+

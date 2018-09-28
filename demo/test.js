@@ -6,17 +6,14 @@
 //     c='ccccccccccc',
 // }
 // console.log(REN.b) // bbbbbbbbbbb
-function createFilter(config) {
-    var newFilter = { age: 16, sexual: 'male' };
-    if (config.age) {
-        newFilter.age = config.age;
-    }
-    if (config.sexual) {
-        newFilter.sexual = config.sexual;
-    }
-    console.log(config); //{ age: 80, sexual1: 'female' }
-    return newFilter;
+function getCounter() {
+    var counter = function (start) { };
+    counter.interval = 123;
+    counter.reset = function () { };
+    return counter;
 }
-var newFilter2 = createFilter({ age: 80, sexual1: 'female' });
-// 方法1：类型断言 as SearchShelter
-// let newFilter2 = createFilter({ age: 80, sexual1: 'female' } as SearchShelter)
+var c = getCounter();
+c(10);
+c.reset();
+c.interval = 5.0;
+console.log(c);
