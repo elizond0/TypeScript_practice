@@ -321,30 +321,136 @@
 // let c = getCounter();
 
 // 7.6 接口继承类
-class Control {//定义类
-    private state: any;
-}
+// class Control {//定义类
+//     private state: any;
+// }
+// interface SelectableControl extends Control {//接口继承类
+//     select(): void;
+// }
+// class Button extends Control implements SelectableControl {//子类继承基类，实现接口类，有效
+//     select() { }
+// }
+// class TextBox extends Control {//子类继承基类，有效
+//     select() { }
+// }
+// // 错误：“Image”类型缺少“state”属性。Image和Input类没有继承接口，继承不包括实现implements
+// class Image implements SelectableControl {//报错
+//     select() { }
+// }
+// class Input {}//什么都没有继承
 
-interface SelectableControl extends Control {//接口继承类
-    select(): void;
-}
+// ## 8. 命名空间 Namespaces
 
-class Button extends Control implements SelectableControl {//子类继承基类，实现接口类，有效
-    select() { }
-}
+// 验证器
+// interface StringValidator {//检测是否是字符串
+//     isAcceptable(s: string): boolean;
+// }
 
-class TextBox extends Control {//子类继承基类，有效
-    select() { }
-}
+// let lettersRegexp = /^[A-Za-z]+$/;
+// let numberRegexp = /^[0-9]+$/;
 
-// 错误：“Image”类型缺少“state”属性。Image和Input类没有继承接口，继承不包括实现implements
-class Image implements SelectableControl {//报错
-    select() { }
-}
+// class LettersOnlyValidator implements StringValidator {
+//     isAcceptable(s: string) {
+//         return lettersRegexp.test(s);
+//     }
+// }
 
-class Input {}//什么都没有继承
+// class ZipCodeValidator implements StringValidator {
+//     isAcceptable(s: string) {
+//         return s.length === 5 && numberRegexp.test(s);
+//     }
+// }
 
+// // 测试
+// let strings = ["Hello", "98052", "101"];
 
+// // 验证器
+// let validators: { [s: string]: StringValidator; } = {};
 
+// validators["ZIP code"] = new ZipCodeValidator();
+// validators["Letters only"] = new LettersOnlyValidator();
 
+// // 检测是否通过验证
+// for (let s of strings) {
+//     for (let name in validators) {
+//         let isMatch = validators[name].isAcceptable(s);
+//         console.log(`'${s}' ${isMatch ? "通过" : "不匹配"} '${name}'！`);
+//     }
+// }
 
+// 使用命名空间的验证器
+// namespace Validation {
+//     // 想让这些接口和类在命名空间之外也是可访问的，所以需要使用 export。
+//     export interface StringValidator {
+//         isAcceptable(s: string): boolean;
+//     }
+
+//     // 变量 lettersRegexp和numberRegexp是实现的细节，不需要导出，因此它们在命名空间外是不能访问的。
+//     const lettersRegexp = /^[A-Za-z]+$/;
+//     const numberRegexp = /^[0-9]+$/;
+
+//     export class LettersOnlyValidator implements StringValidator {
+//         isAcceptable(s: string) {
+//             return lettersRegexp.test(s);
+//         }
+//     }
+
+//     export class ZipCodeValidator implements StringValidator {
+//         isAcceptable(s: string) {
+//             return s.length === 5 && numberRegexp.test(s);
+//         }
+//     }
+// }
+
+// // 测试文本
+// let strings = ["Hello", "98052", "101"];
+
+// // 校验器  由于是在命名空间之外访问，因此需要限定类型的名称，比如 Validation.LettersOnlyValidator。
+// let validators: { [s: string]: Validation.StringValidator; } = {};
+// validators["ZIP code"] = new Validation.ZipCodeValidator();
+// validators["Letters only"] = new Validation.LettersOnlyValidator();
+
+// // 检测是否通过验证
+// for (let s of strings) {
+//     for (let name in validators) {
+//         console.log(`"${ s }" - ${ validators[name].isAcceptable(s) ? "匹配" : "不匹配" } ${ name }`);
+//     }
+// }
+
+// namespace Validation {
+//     export interface StringValidator {
+//         isAcceptable(s: string): boolean;
+//     }
+// }
+
+// namespace Validation {
+//     const lettersRegexp = /^[A-Za-z]+$/;
+//     export class LettersOnlyValidator implements StringValidator {
+//         isAcceptable(s: string) {
+//             return lettersRegexp.test(s);
+//         }
+//     }
+// }
+
+// namespace Validation {
+//     const numberRegexp = /^[0-9]+$/;
+//     export class ZipCodeValidator implements StringValidator {
+//         isAcceptable(s: string) {
+//             return s.length === 5 && numberRegexp.test(s);
+//         }
+//     }
+// }
+
+// let strings = ["Hello", "98052", "101"];
+
+// // Validators to use
+// let validators: { [s: string]: Validation.StringValidator; } = {};
+// validators["ZIP code"] = new Validation.ZipCodeValidator();
+// validators["Letters only"] = new Validation.LettersOnlyValidator();
+
+// // Show whether each string passed each validator
+// for (let s of strings) {
+//     for (let name in validators) {
+//         console.log(`"${ s }" - ${ validators[name].isAcceptable(s) ? "matches" : "does not match" } ${ name }`);
+//     }
+// }

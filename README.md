@@ -633,3 +633,164 @@ class Input {}//什么都没有继承
 // 在Control类内部，是允许通过SelectableControl的实例来访问私有成员state的。 实际上， SelectableControl接口和拥有select方法的Control类是一样的。 Button和TextBox类是SelectableControl的子类（因为它们都继承自Control并有select方法），但Image和Input类并不是这样的。
 ```
 
+## 8. 命名空间 Namespaces
+
+### 8.1 使用方法
+
+* 使用命名空间（之前叫做“内部模块”）来组织代码，“内部模块”现在叫做“命名空间”。 另外，任何使用 module关键字来声明一个内部模块的地方都应该使用namespace关键字来替换。这就避免了让新的使用者被相似的名称所迷惑。
+
+* 所有的验证器都放在一个文件里
+
+```ts
+// 验证器
+interface StringValidator {//检测是否是字符串
+    isAcceptable(s: string): boolean;
+}
+
+let lettersRegexp = /^[A-Za-z]+$/;
+let numberRegexp = /^[0-9]+$/;
+
+class LettersOnlyValidator implements StringValidator {
+    isAcceptable(s: string) {
+        return lettersRegexp.test(s);
+    }
+}
+
+class ZipCodeValidator implements StringValidator {
+    isAcceptable(s: string) {
+        return s.length === 5 && numberRegexp.test(s);
+    }
+}
+
+// 测试文本
+let strings = ["Hello", "98052", "101"];
+
+// 校验器
+let validators: { [s: string]: StringValidator; } = {};
+
+validators["ZIP code"] = new ZipCodeValidator();
+validators["Letters only"] = new LettersOnlyValidator();
+
+// 检测是否通过验证
+for (let s of strings) {
+    for (let name in validators) {
+        let isMatch = validators[name].isAcceptable(s);
+        console.log(`'${s}' ${isMatch ? "通过" : "不匹配"} '${name}'！`);
+    }
+}
+```
+
+* 把所有与验证器相关的类型都放到一个叫做Validation的命名空间里
+
+```ts
+namespace Validation {
+    // 想让这些接口和类在命名空间之外也是可访问的，所以需要使用 export。
+    export interface StringValidator {
+        isAcceptable(s: string): boolean;
+    }
+
+    // 变量 lettersRegexp和numberRegexp是实现的细节，不需要导出，因此它们在命名空间外是不能访问的。
+    const lettersRegexp = /^[A-Za-z]+$/;
+    const numberRegexp = /^[0-9]+$/;
+
+    export class LettersOnlyValidator implements StringValidator {
+        isAcceptable(s: string) {
+            return lettersRegexp.test(s);
+        }
+    }
+
+    export class ZipCodeValidator implements StringValidator {
+        isAcceptable(s: string) {
+            return s.length === 5 && numberRegexp.test(s);
+        }
+    }
+}
+
+// 测试文本
+let strings = ["Hello", "98052", "101"];
+
+// 校验器  由于是在命名空间之外访问，因此需要限定类型的名称，比如 Validation.LettersOnlyValidator。
+let validators: { [s: string]: Validation.StringValidator; } = {};
+validators["ZIP code"] = new Validation.ZipCodeValidator();
+validators["Letters only"] = new Validation.LettersOnlyValidator();
+
+// 检测是否通过验证
+for (let s of strings) {
+    for (let name in validators) {
+        console.log(`"${ s }" - ${ validators[name].isAcceptable(s) ? "匹配" : "不匹配" } ${ name }`);
+    }
+}
+```
+
+* 分离到多文件，尽管是不同的文件，它们仍是同一个命名空间，并且在使用的时候就如同它们在一个文件中定义的一样。 因为不同文件之间存在依赖关系，所以我们加入了引用标签来告诉编译器文件之间的关联。
+
+```ts
+// Validation.ts
+namespace Validation {
+    export interface StringValidator {
+        isAcceptable(s: string): boolean;
+    }
+}
+
+// LettersOnlyValidator.ts
+/// <reference path="Validation.ts" />
+namespace Validation {
+    const lettersRegexp = /^[A-Za-z]+$/;
+    export class LettersOnlyValidator implements StringValidator {
+        isAcceptable(s: string) {
+            return lettersRegexp.test(s);
+        }
+    }
+}
+
+// ZipCodeValidator.ts
+/// <reference path="Validation.ts" />
+namespace Validation {
+    const numberRegexp = /^[0-9]+$/;
+    export class ZipCodeValidator implements StringValidator {
+        isAcceptable(s: string) {
+            return s.length === 5 && numberRegexp.test(s);
+        }
+    }
+}
+
+// Test.ts
+/// <reference path="Validation.ts" />
+/// <reference path="LettersOnlyValidator.ts" />
+/// <reference path="ZipCodeValidator.ts" />
+
+// 测试文本
+let strings = ["Hello", "98052", "101"];
+
+// 校验器
+let validators: { [s: string]: Validation.StringValidator; } = {};
+validators["ZIP code"] = new Validation.ZipCodeValidator();
+validators["Letters only"] = new Validation.LettersOnlyValidator();
+
+// 检测是否通过验证
+for (let s of strings) {
+    for (let name in validators) {
+        console.log(`"${ s }" - ${ validators[name].isAcceptable(s) ? "匹配" : "不匹配" } ${ name }`);
+    }
+}
+```
+
+* 当涉及到多文件时，必须确保所有编译后的代码都被加载了。 有两种方式。
+1. 把所有的输入文件编译为一个输出文件，需要使用--outFile标记：$ tsc --outFile sample.js Test.ts ，编译器会根据test.ts文件中的reference标签依次导入
+2. 可以编译每一个文件（默认方式），那么每个源文件都会对应生成一个JavaScript文件。 然后，在页面上通过 script 标签把所有生成的JavaScript文件按正确的顺序引进来
+
+### 8.2 别名
+
+* 另一种简化命名空间操作的方法是使用import q = x.y.z给常用的对象起一个短的名字，可以用这种方法为任意标识符创建别名，也包括导入的模块中的对象。
+
+```ts
+namespace Shapes {
+    export namespace Polygons {
+        export class Triangle { }
+        export class Square { }
+    }
+}
+
+import polygons = Shapes.Polygons;
+let sq = new polygons.Square(); // 相当于 "new Shapes.Polygons.Square()"
+```
