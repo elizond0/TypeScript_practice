@@ -53,7 +53,7 @@ tsc --version
 
 * TypeScript中的数据类型有：
 1. Undefined : 与js中的undefined一样
-2. Number: 数值类型；包括整型和浮点型,包裹NaN,Infinity,-Infunity
+2. Number: 数值类型；包括整型和浮点型,包括NaN,Infinity,-Infunity
 3. string : 字符串类型;
 4. Boolean: 布尔类型；只有True和False
 5. enum：枚举类型；
